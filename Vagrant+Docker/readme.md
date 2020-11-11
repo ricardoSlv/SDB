@@ -24,3 +24,21 @@ docker compose up -d web
 
 # Copy files to vagrant vm
 scp -r docker_env/ vagrant@10.0.0.101:~/
+
+# Run Docker swarm leader
+sudo docker swarm init --advertise-addr 10.128.0.15:2377
+
+# Join Docker Swarm 
+sudo docker swarm join --token TOKENHERE
+
+# Check swarm on leader
+sudo docker node ls
+
+# Launch swarm on leader
+sudo docker stack deploy -c docker-compose.yml sdb
+
+# Inspect service
+docker serve in pretty-print
+
+# Upscale/Downscale swarm
+sudo docker service scale sdb_web=1
