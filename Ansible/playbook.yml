@@ -1,0 +1,53 @@
+- name: Install and update 
+  hosts: gcp
+  remote_user: ricg5
+  vars: 
+    #hashed_password: "{{lookup('file','./hashed_password')}}"
+    hashed_password: '$/UjKQPPwFczWES/WDe9VLO8PFId2MoUSbAzcUCo1ZWtNkqVBg3lRclluZeAt9W87/3b7Q4xqLNVa.zvKitl463oQwAOuj0hq0'
+    ssh_pub_key: "{{lookup('file','~/.ssh/id_rsa.pub')}}"
+
+  tasks:
+  - name: Update Packages
+    become: yes
+    apt:
+      name: "*"
+      state: latest    
+  - name: Install Packages
+    become: yes
+    apt: 
+      update_cache: yes
+      pkg:
+      - openntpd
+      - vim-nox
+  - name: Create "tester" user
+    become: yes
+    user: 
+      name: tester
+      #password: "{{hashed_password}}"
+      password: "{{ '123456' | password_hash('sha512') }}"
+      groups: 
+        - sudo
+      state: present
+  - name: Set authorized key for "tester" user
+    become: yes
+    authorized_key:
+      user: tester
+      state: present
+      key: "{{ssh_pub_key}}"
+  - name: Disable root and pass auth for OpenSSH
+    become: yes
+    copy:
+      src: sshd_config
+      dest: /etc/ssh/ssh_config
+  - name: Enable and Start OpenSSH
+    become: yes
+    service:
+      name: sshd
+      enabled: yes
+      state: started
+  - name: Enable and Start OpenNTPD
+    become: yes
+    service:
+      name: openntpd
+      enabled: yes
+      state: started
