@@ -1,0 +1,4 @@
+---
+# vars file for common
+ssh_pub_key: "{{lookup('file','~/.ssh/id_rsa.pub') }}"
+

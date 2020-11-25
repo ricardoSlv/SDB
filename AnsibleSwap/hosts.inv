@@ -3,3 +3,6 @@
 
 [sqlservers]
 34.105.144.173
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3

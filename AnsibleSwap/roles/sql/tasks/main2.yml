@@ -1,0 +1,31 @@
+# tasks file for sql
+- name: Update system packages
+  become: yes
+  vars:
+        packages:
+                  - python 
+                  - mysql-server 
+  apt:
+        update_cache: yes
+        pkg: 
+                name: "{{ item }}"
+                state: latest
+        loop: "{{ packages }}"
+- name: Create database
+  mysql_db:
+        name: swap
+        state: present
+
+- name: Create User
+  mysql_user:
+        name: 'ola'
+        password: 'segredo'
+        # O user tem todos os privilegios (ALL) em todas as tabelas
+        # da db swap (swap.*)
+        priv: 'swap.*:ALL, GRANT'
+        state: present
+
+- name: Move config file to vm
+  copy:
+        src: ./roles/sql/files/mysql.cnf
+        dest: /etc/mysql/mysql.conf.d/mysql.cnf

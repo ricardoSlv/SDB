@@ -1,0 +1,31 @@
+---
+- name: Install MySql and other required software
+  become: yes
+  apt:
+        pkg:
+                - mysql-server
+                - python3-pip
+- name: Install the python mysql module
+  pip:
+          name: PyMySQL
+- name: Create database
+  mysql_db:
+          name: swap
+          state: present
+          login_unix_socket: /var/run/mysqld/mysqld.sock
+- name: Create User
+  mysql_user:
+          name: user@34.105.144.173
+          password: pass123
+          priv: 'swap.*:ALL, GRANT'
+          login_user: user
+          login_password: pass123
+          state: present
+- name: Move config file to VM
+  copy:
+          src: ./roles/sql/files/mysqld.cnf
+          dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+- name: restart service
+  service:
+          name: mysql
+          state: restarted

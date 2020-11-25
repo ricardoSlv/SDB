@@ -1,17 +1,18 @@
+
 - name: apply common configuration to all nodes
   hosts: all
-  remote_user: root
+  remote_user: ricg5
   roles:
     - common
 
 - name: configure and deploy the PHP webservers and application code
   hosts: phpservers
-  remote_user: root
+  remote_user: ricg5
   roles:
     - php
 
 - name: deploy MySQL and configure the databases
   hosts: sqlservers
-  remote_user: root
+  remote_user: ricg5
   roles:
     - sql
